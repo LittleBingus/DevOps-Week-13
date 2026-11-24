@@ -1,5 +1,7 @@
-Put the 11 required screenshots here:
+Week 13 Reflection
 
-01-tests-pass.png, 02-image.png, 03-cluster-ready.png, 04-deployment-yaml.png,
-05-stack-running.png, 06-app-ticket.png, 07-operations.png, 08-scaled.png,
-09-self-healing.png, 10-persistence.png, 11-github.png
+Kubernetes automatically created replacement pods when I deleted them to maintain the desired number of replicas.
+
+The liveness probe checks whether the application is running, while the readiness probe checks whether the application is ready to receive traffic and can connect to PostgreSQL.
+
+The database ticket survived pod deletion because PostgreSQL stores its data on a persistent volume rather than inside the pod itself.
