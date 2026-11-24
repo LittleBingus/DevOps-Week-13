@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -v
+
+  build:
+    name: Build image and validate manifests
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build container image
+        run: docker build -t week13-helpdesk:v1.0.0 .
+      - name: Render Kubernetes manifests
+        run: kubectl kustomize k8s/ > /dev/null
+      - name: Make sure no real Secret is committed
+        run: |
+          if [ -f k8s/secret.yaml ]; then echo "k8s/secret.yaml must not be committed"; exit 1; fi
+          if kubectl kustomize k8s/ | grep -q '^kind: Secret'; then echo "Secret found in kustomization"; exit 1; fi
